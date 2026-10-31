@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.CafeOrder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowBackground">@color/bg_main</item>
+        <item name="android:editTextColor">#0f172a</item>
+        <item name="android:textColor">#0f172a</item>
+        <item name="android:textColorPrimary">#0f172a</item>
+        <item name="android:textColorHint">#94a3b8</item>
+    </style>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cấu hình địa chỉ Máy Thanh Toán"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#0f172a" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Nhập địa chỉ IP và Cổng (ví dụ: 192.168.1.15:5000):"
+        android:textSize="13sp"
+        android:textColor="#64748b" />
+
+    <EditText
+        android:id="@+id/edtServerIp"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_search_input"
+        android:hint="192.168.1.15:5000"
+        android:textColor="#0f172a"
+        android:textColorHint="#94a3b8"
+        android:paddingHorizontal="14dp"
+        android:textSize="14sp"
+        android:inputType="text"
+        android:maxLines="1" />
+
+</LinearLayout>

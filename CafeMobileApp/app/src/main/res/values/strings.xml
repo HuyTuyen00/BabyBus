@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BabyBus Order</string>
+    <string name="search_table_hint">Nhập phòng/bàn cần tìm</string>
+    <string name="search_product_hint">Tìm kiếm sản phẩm...</string>
+    <string name="all_tables">Tất cả</string>
+    <string name="occupied_tables">Sử dụng</string>
+    <string name="empty_tables">Còn trống</string>
+    <string name="notify_kitchen">Thông báo</string>
+    <string name="checkout">Thanh toán</string>
+    <string name="total_price">Tổng tiền</string>
+</resources>

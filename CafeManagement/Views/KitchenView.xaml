@@ -1,0 +1,433 @@
+<UserControl x:Class="CafeManagement.Views.KitchenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CafeManagement.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="{StaticResource BackgroundBrush}">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- Touch-Friendly ScrollBar Style -->
+        <Style x:Key="TouchScrollBarThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="#94a3b8" CornerRadius="8" Margin="3" Opacity="0.75"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="1.0"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter Property="Opacity" Value="1.0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TouchScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="MinWidth" Value="24"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="#f1f5f9" SnapsToDevicePixels="true">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource TouchScrollBarThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TouchScrollViewer" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="PanningMode" Value="Both"/>
+            <Setter Property="PanningDeceleration" Value="0.002"/>
+            <Setter Property="PanningRatio" Value="1"/>
+            <Setter Property="CanContentScroll" Value="False"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollContentPresenter Grid.Column="0" CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1"
+                                       Style="{StaticResource TouchScrollBar}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Segmented Tab Button Style -->
+        <Style x:Key="KitchenTabRadioButton" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#93c5fd"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="22,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#ffffff"/>
+                                <Setter Property="Foreground" Value="#0f3a63"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <!-- Header with Title, Tab Switcher and Controls -->
+            <RowDefinition Height="Auto"/>
+            <!-- Main Content Area -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Title -->
+            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                <TextBlock Text="MÀN HÌNH CHẾ BIẾN (NHÀ BẾP)" FontSize="18" FontWeight="ExtraBold" Foreground="#0f3a63"/>
+                <TextBlock Text="Đồng bộ thời gian thực với thiết bị di động LAN" FontSize="12" Foreground="#64748b"/>
+            </StackPanel>
+
+            <!-- Tab Switcher: Theo món / Theo bàn -->
+            <Border Grid.Column="1" Background="#0f3a63" CornerRadius="8" Padding="3" Margin="24,0,0,0" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="radTabByProduct" Content="Theo món" 
+                                 Style="{StaticResource KitchenTabRadioButton}" 
+                                 GroupName="KitchenTabGroup" 
+                                 Checked="RadTab_Checked"/>
+                    <RadioButton x:Name="radTabByTable" Content="Theo bàn" 
+                                 IsChecked="True" 
+                                 Style="{StaticResource KitchenTabRadioButton}" 
+                                 GroupName="KitchenTabGroup" 
+                                 Checked="RadTab_Checked"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Controls (Right Side) -->
+            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                <CheckBox x:Name="chkEnableSound" Content="🔔 Âm thanh" IsChecked="True" VerticalAlignment="Center" Margin="0,0,12,0" FontWeight="SemiBold" Foreground="#334155" Checked="ChkEnableSound_Changed" Unchecked="ChkEnableSound_Changed"/>
+                <Button Content="🔊 Thử chuông" 
+                        Style="{StaticResource ModernButton}" 
+                        Background="#e2e8f0"
+                        Foreground="#1e293b"
+                        Click="BtnTestSound_Click"
+                        Height="36"
+                        Width="110"
+                        Margin="0,0,10,0"/>
+                <Button Content="Làm mới" 
+                        Style="{StaticResource ModernButton}" 
+                        Background="{StaticResource PrimaryBrush}" 
+                        Click="BtnRefresh_Click"
+                        Height="36"
+                        Width="100"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ================= PANEL 1: THEO BÀN ================= -->
+        <Grid x:Name="panelByTable" Grid.Row="1" Visibility="Visible">
+            <ScrollViewer x:Name="scrollByTable"
+                          Style="{StaticResource TouchScrollViewer}"
+                          PreviewMouseDown="ScrollViewer_PreviewMouseDown"
+                          PreviewMouseMove="ScrollViewer_PreviewMouseMove"
+                          PreviewMouseUp="ScrollViewer_PreviewMouseUp">
+                <ItemsControl x:Name="itemsTables">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Card Table Row -->
+                            <Border Margin="0,0,0,16" Background="#ffffff" BorderBrush="#cbd5e1" BorderThickness="1" CornerRadius="8" HorizontalAlignment="Stretch">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="6" Color="#000000" Opacity="0.07" ShadowDepth="1"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/> <!-- Header -->
+                                        <RowDefinition Height="*"/>    <!-- Items List (Horizontal WrapPanel) -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Table Header -->
+                                    <Border Grid.Row="0" Background="{Binding HeaderColorBrush}" CornerRadius="8,8,0,0" Padding="16,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Table Name -->
+                                            <TextBlock Grid.Column="0" Text="{Binding TableName}" FontSize="20" FontWeight="ExtraBold" Foreground="#ffffff" VerticalAlignment="Center"/>
+
+                                            <!-- Fast Complete Table Button >> (Crisp high-contrast white button) -->
+                                            <Button Grid.Column="1" 
+                                                    Content=">>" 
+                                                    Width="38" Height="28" 
+                                                    Margin="12,0,0,0" 
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Background="#ffffff" 
+                                                    Foreground="{Binding HeaderColorBrush}" 
+                                                    FontWeight="ExtraBold" 
+                                                    FontSize="14"
+                                                    Cursor="Hand"
+                                                    ToolTip="Xong toàn bộ các món trong bàn"
+                                                    Click="BtnCompleteTable_Click" 
+                                                    Tag="{Binding TableName}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="0">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
+                                            <!-- Time Info -->
+                                            <TextBlock Grid.Column="2" Text="{Binding TimeText}" FontSize="14" FontWeight="Bold" Foreground="#f1f5f9" VerticalAlignment="Center" Margin="0,0,16,0"/>
+
+                                            <!-- Print Slip Button -->
+                                            <Button Grid.Column="3" 
+                                                    Content="🖨 In món xong" 
+                                                    Style="{StaticResource ModernButton}" 
+                                                    Background="#ffffff" 
+                                                    Foreground="{Binding HeaderColorBrush}"
+                                                    FontWeight="Bold"
+                                                    FontSize="13"
+                                                    Height="32" 
+                                                    Padding="14,0"
+                                                    Click="BtnPrintKitchenSlip_Click"
+                                                    Tag="{Binding TableName}"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Table Items Body -->
+                                    <Border Grid.Row="1" Padding="16,14">
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Margin="0,0,0,0"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <!-- Food Item Card -->
+                                                    <Border Margin="0,0,14,12" Padding="10" Width="235" 
+                                                            Background="{Binding ItemBgColor}" 
+                                                            BorderBrush="{Binding ItemBorderColor}" 
+                                                            BorderThickness="1" 
+                                                            CornerRadius="8">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*"/>
+                                                                <RowDefinition Height="Auto"/>
+                                                            </Grid.RowDefinitions>
+                                                            
+                                                            <!-- Product Details -->
+                                                            <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                                                                <TextBlock Text="{Binding ProductName}" FontSize="15" FontWeight="Bold" Foreground="{Binding ItemFgColor}" TextWrapping="Wrap"/>
+                                                                <TextBlock Text="{Binding DisplayTotalText}" FontSize="13" FontWeight="SemiBold" Foreground="{Binding ItemFgColor}" Margin="0,2,0,0"/>
+                                                                
+                                                                <!-- Note box if exists -->
+                                                                <Border Margin="0,5,0,0" Padding="5,2" Background="#fef3c7" CornerRadius="4" BorderBrush="#fde68a" BorderThickness="0.5" HorizontalAlignment="Left"
+                                                                        Visibility="{Binding HasNote, Converter={StaticResource BoolToVis}}">
+                                                                    <TextBlock Text="{Binding Note}" FontSize="11" FontWeight="SemiBold" Foreground="#b45309" MaxWidth="195" TextWrapping="Wrap"/>
+                                                                </Border>
+                                                            </StackPanel>
+                                                            
+                                                            <!-- Bottom Action Controls: [ > ]  [ >> ]  [ SL: X/Y ] -->
+                                                            <Grid Grid.Row="1" Margin="0,4,0,0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <!-- Single Increment Button > -->
+                                                                <Button Grid.Column="0" 
+                                                                        Content=">" 
+                                                                        Width="32" Height="30" 
+                                                                        Background="#2563eb" 
+                                                                        Foreground="#ffffff" 
+                                                                        FontWeight="ExtraBold" 
+                                                                        FontSize="14"
+                                                                        Cursor="Hand"
+                                                                        ToolTip="Tăng 1 số lượng đã xong"
+                                                                        Click="BtnIncrementItem_Click" 
+                                                                        Tag="{Binding Id}"
+                                                                        IsEnabled="{Binding IsActionEnabled}" 
+                                                                        Opacity="{Binding ActionOpacity}">
+                                                                    <Button.Template>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="0">
+                                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+
+                                                                <!-- Complete All Remaining Button >> -->
+                                                                <Button Grid.Column="1" 
+                                                                        Content=">>" 
+                                                                        Width="38" Height="30" 
+                                                                        Margin="5,0,0,0"
+                                                                        Background="#2563eb" 
+                                                                        Foreground="#ffffff" 
+                                                                        FontWeight="ExtraBold" 
+                                                                        FontSize="13"
+                                                                        Cursor="Hand"
+                                                                        ToolTip="Xong toàn bộ số lượng còn lại"
+                                                                        Click="BtnCompleteAllItem_Click" 
+                                                                        Tag="{Binding Id}"
+                                                                        IsEnabled="{Binding IsActionEnabled}" 
+                                                                        Opacity="{Binding ActionOpacity}">
+                                                                    <Button.Template>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="0">
+                                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+
+                                                                <!-- Status Counter Display: SL: 0/1 or SL: 5/10 -->
+                                                                <Border Grid.Column="2" 
+                                                                        Margin="6,0,0,0" 
+                                                                        Background="#ffffff" 
+                                                                        BorderBrush="{Binding ItemBorderColor}" 
+                                                                        BorderThickness="1" 
+                                                                        CornerRadius="5" 
+                                                                        Padding="4,2" 
+                                                                        HorizontalAlignment="Stretch">
+                                                                    <TextBlock Text="{Binding DisplaySlText}" 
+                                                                               FontSize="13" 
+                                                                               FontWeight="Bold" 
+                                                                               Foreground="{Binding ItemFgColor}" 
+                                                                               HorizontalAlignment="Center" 
+                                                                               VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ================= PANEL 2: THEO MÓN (CHỜ CHẾ BIẾN) ================= -->
+        <Grid x:Name="panelByProduct" Grid.Row="1" Visibility="Collapsed">
+            <Border Background="#ffffff" BorderBrush="#cbd5e1" BorderThickness="1" CornerRadius="8" HorizontalAlignment="Stretch">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="6" Color="#000000" Opacity="0.07" ShadowDepth="1"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Title Header -->
+                        <RowDefinition Height="*"/>    <!-- Product List -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Section Banner Header -->
+                    <Border Grid.Row="0" Background="#0f3a63" CornerRadius="8,8,0,0" Padding="24,14">
+                        <TextBlock Text="Chờ chế biến" FontSize="19" FontWeight="ExtraBold" Foreground="#ffffff"/>
+                    </Border>
+
+                    <!-- Product Summary List ScrollViewer -->
+                    <ScrollViewer x:Name="scrollByProduct" 
+                                  Grid.Row="1"
+                                  Style="{StaticResource TouchScrollViewer}"
+                                  Padding="20"
+                                  PreviewMouseDown="ScrollViewer_PreviewMouseDown"
+                                  PreviewMouseMove="ScrollViewer_PreviewMouseMove"
+                                  PreviewMouseUp="ScrollViewer_PreviewMouseUp">
+                        <ItemsControl x:Name="itemsProductSummary">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="0,0,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- Compact Product Summary Card -->
+                                    <Border Margin="0,0,16,14" Padding="16,12" Width="300" 
+                                            Background="#f8fafc" 
+                                            BorderBrush="#cbd5e1" 
+                                            BorderThickness="1" 
+                                            CornerRadius="8">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="4" Color="#000000" Opacity="0.04" ShadowDepth="1"/>
+                                        </Border.Effect>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Product Name -->
+                                            <TextBlock Grid.Column="0" Text="{Binding ProductName}" FontSize="16" FontWeight="Bold" Foreground="#1e293b" VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                                            <!-- Remaining Quantity Count Badge (Immediately next to name) -->
+                                            <Border Grid.Column="1" Background="#dcfce7" BorderBrush="#86efac" BorderThickness="1" CornerRadius="8" Padding="14,4" MinWidth="48" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding RemainingQuantity}" FontSize="20" FontWeight="ExtraBold" Foreground="#15803d" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
+

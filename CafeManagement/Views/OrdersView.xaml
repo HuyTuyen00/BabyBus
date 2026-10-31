@@ -1,0 +1,293 @@
+<UserControl x:Class="CafeManagement.Views.OrdersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CafeManagement.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="900"
+             Background="{StaticResource BackgroundBrush}">
+    
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <!-- Left Side: Orders list -->
+            <ColumnDefinition Width="3*"/>
+            <!-- Right Side: Order details -->
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT SIDE: INVOICE LIST -->
+        <Grid Grid.Column="0" Margin="0,0,15,0">
+            <Grid.RowDefinitions>
+                <!-- Filters panel -->
+                <RowDefinition Height="Auto"/>
+                <!-- Invoice Grid -->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Filter Panel (card style) -->
+            <Border Grid.Row="0" Background="White" CornerRadius="8" BorderThickness="1" BorderBrush="#e2e8f0" 
+                    Padding="12,10" Margin="0,0,0,12">
+                <StackPanel>
+                    <!-- Row 1: Search & Date filter -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Search box with icon overlay -->
+                        <Grid Grid.Column="0" Margin="0,0,10,0">
+                            <TextBox x:Name="txtSearch"
+                                     GotFocus="TxtSearch_GotFocus"
+                                     LostFocus="TxtSearch_LostFocus"
+                                     Foreground="Gray"
+                                     Text="Tìm theo mã hóa đơn..."
+                                     TextChanged="TxtSearch_TextChanged"
+                                     Height="34"
+                                     Padding="30,0,10,0"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="12.5"/>
+                            <TextBlock Text="🔍" FontSize="12" VerticalAlignment="Center"
+                                       HorizontalAlignment="Left" Margin="8,0,0,0" IsHitTestVisible="False"/>
+                        </Grid>
+
+                        <TextBlock Grid.Column="1" Text="Từ:" VerticalAlignment="Center"
+                                   Foreground="#64748b" FontSize="12" FontWeight="SemiBold" Margin="0,0,4,0"/>
+                        <DatePicker x:Name="dpStart" Grid.Column="2"
+                                    Height="34" Width="115" Margin="0,0,8,0"
+                                    SelectedDateChanged="DpStart_SelectedDateChanged"/>
+
+                        <TextBlock Grid.Column="3" Text="Đến:" VerticalAlignment="Center"
+                                   Foreground="#64748b" FontSize="12" FontWeight="SemiBold" Margin="0,0,4,0"/>
+                        <DatePicker x:Name="dpEnd" Grid.Column="4"
+                                    Height="34" Width="115" Margin="0,0,8,0"
+                                    SelectedDateChanged="DpEnd_SelectedDateChanged"/>
+
+                        <!-- Filter button -->
+                        <Button Grid.Column="5"
+                                Content="🔍 Lọc"
+                                Style="{StaticResource ModernButton}"
+                                Background="#334155"
+                                Foreground="White"
+                                Height="34"
+                                Padding="12,0"
+                                Click="BtnFilter_Click"/>
+                    </Grid>
+
+                    <!-- Row 2: Action Buttons (Delete Selected, Delete All, Export Excel) -->
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <!-- Delete Selected Orders Button -->
+                            <Button Content="🗑 Xóa đã chọn"
+                                    Style="{StaticResource ModernButton}"
+                                    Background="{StaticResource DangerBrush}"
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    Height="34"
+                                    Padding="12,0"
+                                    Margin="0,0,8,0"
+                                    Click="BtnDeleteSelected_Click"/>
+
+                            <!-- Delete All Orders Button -->
+                            <Button Content="💥 Xóa toàn bộ hóa đơn"
+                                    Style="{StaticResource ModernButton}"
+                                    Background="#991b1b"
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    Height="34"
+                                    Padding="12,0"
+                                    Click="BtnDeleteAll_Click"/>
+                        </StackPanel>
+
+                        <!-- Export Excel -->
+                        <Button Content="📄 Xuất Excel"
+                                Style="{StaticResource ModernButton}"
+                                Background="{StaticResource PrimaryBrush}"
+                                Height="34"
+                                Padding="12,0"
+                                HorizontalAlignment="Right"
+                                Click="BtnExportExcel_Click"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Orders Grid -->
+            <DataGrid x:Name="gridOrders" Grid.Row="1" VerticalScrollBarVisibility="Auto" SelectionChanged="GridOrders_SelectionChanged">
+                <DataGrid.Columns>
+                    <!-- Checkbox Column -->
+                    <DataGridTemplateColumn Width="45" HeaderStyle="{StaticResource HeaderCenter}">
+                        <DataGridTemplateColumn.Header>
+                            <CheckBox x:Name="chkSelectAll" HorizontalAlignment="Center" VerticalAlignment="Center" Click="ChkSelectAll_Click" ToolTip="Chọn tất cả"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" 
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Mã HĐ" Binding="{Binding Id}" Width="0.8*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderCenter}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Ngày bán" Binding="{Binding OrderDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="1.5*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderCenter}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat='{}{0:N0}'}" Width="1.3*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderRight}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Padding" Value="0,0,12,0"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Foreground" Value="#10b981"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="1.1*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderCenter}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- RIGHT SIDE: ORDER DETAILS -->
+        <Border Grid.Column="1" Background="White" CornerRadius="8" BorderThickness="1" BorderBrush="#e2e8f0" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <!-- Detail title & info -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Detail Items DataGrid -->
+                    <RowDefinition Height="*"/>
+                    <!-- Action buttons -->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Order Info -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                    <TextBlock Text="CHI TIẾT HÓA ĐƠN" FontSize="16" FontWeight="Bold" Foreground="#1e293b" Margin="0,0,0,10"/>
+                    <Grid Margin="0,0,0,4">
+                        <TextBlock Text="Mã hóa đơn:" Foreground="#64748b"/>
+                        <TextBlock x:Name="lblDetailOrderId" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#1e293b" Text="-"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,4">
+                        <TextBlock Text="Ngày bán:" Foreground="#64748b"/>
+                        <TextBlock x:Name="lblDetailOrderDate" HorizontalAlignment="Right" Foreground="#1e293b" Text="-"/>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock Text="Tổng thanh toán:" Foreground="#64748b" FontWeight="Bold"/>
+                        <TextBlock x:Name="lblDetailTotal" HorizontalAlignment="Right" FontWeight="ExtraBold" Foreground="#10b981" FontSize="15" Text="0 đ"/>
+                    </Grid>
+                    <Separator Height="1" Background="#e2e8f0"/>
+                </StackPanel>
+
+                <!-- Details Grid -->
+                <DataGrid x:Name="gridDetails" Grid.Row="1" Margin="0,0,0,15" VerticalScrollBarVisibility="Auto">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCancelled}" Value="True">
+                                    <Setter Property="Foreground" Value="#e11d48"/>
+                                    <Setter Property="Background" Value="#fff1f2"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Tên món" Binding="{Binding DisplayProductName}" Width="1.8*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderLeft}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Left"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="8,0,0,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Đơn giá" Binding="{Binding Price, StringFormat='{}{0:N0}'}" Width="1.1*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderRight}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="SL" Binding="{Binding Quantity}" Width="0.6*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderRight}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,8,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="T.Tiền" Binding="{Binding TotalPrice, StringFormat='{}{0:N0}'}" Width="1.4*" IsReadOnly="True" HeaderStyle="{StaticResource HeaderRight}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="0,0,12,0"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Action Buttons -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cancel Button -->
+                    <Button x:Name="btnCancelOrder" 
+                            Grid.Column="0" 
+                            Content="Hủy hóa đơn" 
+                            Style="{StaticResource ModernButton}" 
+                            Background="{StaticResource WarningBrush}" 
+                            Foreground="White"
+                            Height="38" 
+                            Margin="0,0,4,0"
+                            IsEnabled="False"
+                            Click="BtnCancelOrder_Click"/>
+
+                    <!-- Delete Button -->
+                    <Button x:Name="btnDeleteSingleOrder" 
+                            Grid.Column="1" 
+                            Content="Xóa hóa đơn" 
+                            Style="{StaticResource ModernButton}" 
+                            Background="{StaticResource DangerBrush}" 
+                            Foreground="White"
+                            Height="38" 
+                            Margin="4,0,0,0"
+                            IsEnabled="False"
+                            Click="BtnDeleteSingleOrder_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,146 @@
+<Window x:Class="CafeManagement.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CafeManagement"
+        mc:Ignorable="d"
+        Title="BabyBus POS" 
+        Icon="pack://application:,,,/cafe_icon.ico"
+        Height="750" Width="1200" 
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+    
+    <Window.Resources>
+        <Style x:Key="CircleMenuButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#cbd5e1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#0f172a"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#f1f5f9"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#94a3b8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#e2e8f0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Sidebar Navigation -->
+            <ColumnDefinition x:Name="colSidebar" Width="230"/>
+            <!-- Content Display Area -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- SIDEBAR -->
+        <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
+            <Grid Margin="15,20,15,15">
+                <Grid.RowDefinitions>
+                    <!-- Logo Header -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Navigation Buttons -->
+                    <RowDefinition Height="*"/>
+                    <!-- LAN Server Status Footer -->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Logo/System Title -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,30">
+                    <TextBlock Text="BabyBus" FontSize="18" FontWeight="ExtraBold" Foreground="#38bdf8" HorizontalAlignment="Center"/>
+                    <TextBlock Text="POS MANAGEMENT" FontSize="11" FontWeight="Bold" Foreground="#64748b" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    <Separator Height="1" Background="#334155" Margin="0,15,0,0"/>
+                </StackPanel>
+
+                <!-- Navigation List -->
+                <StackPanel Grid.Row="1">
+                    <Button x:Name="btnSales" Content="🛒  Bán hàng" Style="{StaticResource SidebarButton}" Click="BtnSales_Click"/>
+                    <Button x:Name="btnTables" Content="☕  Quản lý Bàn" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnTables_Click"/>
+                    <Button x:Name="btnKitchen" Content="♨  Nhà bếp" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnKitchen_Click"/>
+                    <Button x:Name="btnProducts" Content="📦  Hàng hóa" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnProducts_Click"/>
+                    <Button x:Name="btnOrders" Content="📄  Hóa đơn" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnOrders_Click"/>
+                    <Button x:Name="btnReports" Content="📊  Báo cáo" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnReports_Click"/>
+                    <Button x:Name="btnSettings" Content="⚙  Cài đặt" Style="{StaticResource SidebarButton}" Margin="0,6,0,0" Click="BtnSettings_Click"/>
+                </StackPanel>
+
+                <!-- LAN Server Web URL Footer -->
+                <Border Grid.Row="2" Background="#1e293b" CornerRadius="8" Padding="12" BorderThickness="1" BorderBrush="#334155">
+                    <StackPanel>
+                        <TextBlock Text="KẾT NỐI NHÀ BẾP LAN" FontSize="11" FontWeight="Bold" Foreground="#38bdf8" Margin="0,0,0,6"/>
+                        <TextBlock Text="Mở link trên điện thoại:" FontSize="10" Foreground="#cbd5e1" Margin="0,0,0,4"/>
+                        <TextBox x:Name="txtServerUrl" 
+                                 Text="http://192.168.1.15:5000" 
+                                 FontSize="11" 
+                                 FontWeight="Bold" 
+                                 Background="#0f172a" 
+                                 Foreground="#f59e0b" 
+                                 BorderThickness="0" 
+                                 Padding="5" 
+                                 IsReadOnly="True" 
+                                 HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="* Thiết bị kết nối cùng Wi-Fi" FontSize="9" Foreground="#94a3b8" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- CONTENT PANEL -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Top Header Bar -->
+            <Border Grid.Row="0" Background="White" BorderThickness="0,0,0,1" BorderBrush="#e2e8f0" Padding="15,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Circle Toggle Button (☰) -->
+                        <Button x:Name="btnToggleSidebar" 
+                                Content="☰" 
+                                Width="32" 
+                                Height="32" 
+                                Style="{StaticResource CircleMenuButton}" 
+                                Click="BtnToggleSidebar_Click"/>
+                        
+                        <!-- System Title -->
+                        <TextBlock Text="BabyBus POS" FontSize="16" FontWeight="Black" Foreground="#0f172a" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                    </StackPanel>
+                    
+                    <!-- Server URL header badge -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="Kết nối Bếp:" FontSize="12" Foreground="#64748b" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Border Background="#f1f5f9" CornerRadius="6" Padding="8,4" BorderThickness="1" BorderBrush="#cbd5e1">
+                            <TextBlock x:Name="lblServerUrlHeader" Text="http://192.168.1.15:5000" FontSize="11" FontWeight="Bold" Foreground="#0f766e"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content Area -->
+            <ContentControl x:Name="contentArea" Grid.Row="1" Background="{StaticResource BackgroundBrush}"/>
+        </Grid>
+    </Grid>
+</Window>
+

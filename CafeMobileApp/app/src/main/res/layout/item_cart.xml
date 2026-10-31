@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="3dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp">
+
+    <LinearLayout
+        android:id="@+id/layoutCartItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="#ffffff">
+
+        <!-- Row 1: Product Name (Left) + Delete Button (Right) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvCartItemName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tên món"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#0f172a"
+                android:ellipsize="end"
+                android:maxLines="2" />
+
+            <!-- Delete X Button -->
+            <ImageButton
+                android:id="@+id/btnDeleteCartItem"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#ef4444"
+                android:contentDescription="Xóa" />
+        </LinearLayout>
+
+        <!-- Row 2: Note Input -->
+        <EditText
+            android:id="@+id/edtCartItemNote"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="4dp"
+            android:hint="Ghi chú (ít đường, không đá...)"
+            android:textSize="11sp"
+            android:textColor="#0f172a"
+            android:textColorHint="#94a3b8"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:background="@drawable/bg_search_input" />
+
+        <!-- Row 3: Quantity Controls (Left) + Item Price (Right) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="6dp">
+
+            <!-- Quantity Controls (Minus, Qty, Plus) -->
+            <LinearLayout
+                android:id="@+id/layoutQtyControls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/btnCartMinus"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:backgroundTint="#e2e8f0"
+                    android:text="-"
+                    android:textColor="#0f172a"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
+
+                <TextView
+                    android:id="@+id/tvCartQty"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#0f172a" />
+
+                <Button
+                    android:id="@+id/btnCartPlus"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:backgroundTint="#e2e8f0"
+                    android:text="+"
+                    android:textColor="#0f172a"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
+            </LinearLayout>
+
+            <!-- Spacer -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Item Price -->
+            <TextView
+                android:id="@+id/tvCartItemPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="32.000 đ"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#2563eb" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

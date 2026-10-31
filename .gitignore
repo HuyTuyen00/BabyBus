@@ -1,0 +1,21 @@
+# Visual Studio / .NET
+**/[Bb]in/
+**/[Oo]bj/
+**/.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+db_error_log.txt
+debug_images_log.txt
+image_binding_debug.txt
+
+# Android / Gradle
+.gradle/
+**/build/
+**/local.properties
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+Desktop.ini
