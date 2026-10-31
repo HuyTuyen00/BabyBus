@@ -4,7 +4,6 @@
 [![WPF](https://img.shields.io/badge/Platform-Windows%20WPF-brightgreen.svg)](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/)
 [![Android](https://img.shields.io/badge/Android-Native%20(Java)-3DDC84.svg?logo=android)](https://developer.android.com/)
 [![SQL Server](https://img.shields.io/badge/Database-SQL%20Server-CC292B.svg?logo=microsoft-sql-server)](https://www.microsoft.com/sql-server)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **BabyBus** là giải pháp phần mềm quản lý và bán hàng quán cà phê toàn diện, chuyên nghiệp, hỗ trợ đa thiết bị hoạt động đồng bộ thời gian thực qua mạng nội bộ LAN / Wi-Fi:
 * 🖥️ **Máy tính Thu ngân / Máy chủ POS**: Ứng dụng Desktop WPF (.NET 8) hiệu năng cao, tích hợp Web Server Kestrel máy chủ API.
@@ -123,8 +122,4 @@ cd CafeMobileApp
 3. **Trên Điện thoại**:
    * Cùng kết nối vào Wi-Fi quán, nhập địa chỉ IP: `http://<IP_MÁY_1>:5000`.
 
----
 
-## 📄 Bản Quyền & Giấy Phép
-
-Phát triển bởi **BabyBus Team**. Phát hành theo giấy phép [MIT License](LICENSE).
